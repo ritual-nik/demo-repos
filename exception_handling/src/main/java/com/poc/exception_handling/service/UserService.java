@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import javax.naming.InvalidNameException;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -17,7 +19,7 @@ public class UserService {
         return userRepository.getUser(id);
     }
 
-    public User createUser(final User user) {
+    public User createUser(final User user) throws InvalidNameException {
         return userRepository.createUser(user);
     }
 }

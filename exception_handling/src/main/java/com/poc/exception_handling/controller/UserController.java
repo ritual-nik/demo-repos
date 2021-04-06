@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import javax.naming.InvalidNameException;
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
@@ -27,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody @Valid User user) throws InvalidNameException {
         final User result = userService.createUser(user);
         return ResponseEntity.ok(result);
     }
