@@ -1,5 +1,7 @@
 package com.poc.exception_handling.exceptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -8,18 +10,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class UserExceptionHandler {
+    Logger logger = LoggerFactory.getLogger(UserExceptionHandler.class);
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(UserNotFoundException e) {
-        return new ResponseEntity<>(
-                "User not found",
-                HttpStatus.NOT_FOUND);
+    public ResponseEntity<Void> handleUserNotFound(UserNotFoundException e) {
+        logger.info(e.getMessage());
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ConflictingUserIdException.class)
-    public ResponseEntity<String> handleUserNotFound(ConflictingUserIdException e) {
+    public ResponseEntity<ApiError> handleConflictingUserId(ConflictingUserIdException e) {
+        logger.warn("conflicting user id:" + e.conflictingId, e);
+        ApiError apiError = new ApiError();
+        apiError.setMessage(e.getLocalizedMessage());
+
         return new ResponseEntity<>(
-                "User id already exists",
+                apiError,
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -31,9 +37,12 @@ public class UserExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleUserNotFound(Exception e) {
+    public ResponseEntity<ApiError> handleUnknown(Exception e) {
+        logger.error(e.getMessage(), e);
+        ApiError apiError = new ApiError();
+        apiError.setMessage("Unknown exception"); // we can use assumed locale if we care to
         return new ResponseEntity<>(
-                "Unknown exception",
+                apiError,
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

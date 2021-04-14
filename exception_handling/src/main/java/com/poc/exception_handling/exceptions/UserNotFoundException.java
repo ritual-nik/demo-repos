@@ -1,8 +1,8 @@
 package com.poc.exception_handling.exceptions;
 
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends ApiException {
 
-    public UserNotFoundException() {
-        super("User does not exist");
+    public UserNotFoundException(String nonLocalizedMessage) {
+        super(nonLocalizedMessage);
     }
 }
